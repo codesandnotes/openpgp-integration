@@ -26,7 +26,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.security.Security;
@@ -37,7 +36,6 @@ public class OpenPGP {
     private static final int CERTAINTY = 12;
     private static final BigInteger PUBLIC_EXPONENT = BigInteger.valueOf(0x10001);
     private static final int S2K_COUNT = 0xc0;
-    private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
