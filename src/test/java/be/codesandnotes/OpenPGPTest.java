@@ -6,8 +6,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.security.SignatureException;
 
 import static be.codesandnotes.Identities.*;
 import static org.assertj.core.api.Assertions.*;
@@ -53,5 +56,32 @@ public class OpenPGPTest {
 
         LOGGER.info("avaj's private key ring:\n" + armoredKeyPair.privateKey());
         LOGGER.info("avaj's public key ring:\n" + armoredKeyPair.publicKey());
+    }
+
+    @Test
+    public void encryptSignedMessageAsJavaAndDecryptItAsAvaj() throws IOException, PGPException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException {
+
+        String unencryptedMessage = "Message from java to avaj: you're all backwards!";
+
+        String encryptedMessage = openPgp.encryptAndSign(
+                unencryptedMessage,
+                JAVA_USER_ID_EMAIL,
+                JAVA_PASSPHRASE,
+                OpenPGP.ArmoredKeyPair.of(JAVA_PRIVATE_KEYS, JAVA_PUBLIC_KEYS),
+                AVAJ_USER_ID_EMAIL,
+                AVAJ_PUBLIC_KEYS);
+
+        assertThat(encryptedMessage).isNotEmpty();
+
+        LOGGER.info("java's encrypted message to avaj:\n" + encryptedMessage);
+
+        String messageDecryptedByAvaj = openPgp.decryptAndVerify(
+                encryptedMessage,
+                AVAJ_PASSPHRASE,
+                OpenPGP.ArmoredKeyPair.of(AVAJ_PRIVATE_KEYS, AVAJ_PUBLIC_KEYS),
+                JAVA_USER_ID_EMAIL,
+                JAVA_PUBLIC_KEYS);
+
+        assertThat(messageDecryptedByAvaj).isEqualTo(unencryptedMessage);
     }
 }
