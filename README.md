@@ -10,7 +10,7 @@ You can find all the posts explaining this stuff on my blog, [Codes And Notes](h
 
 At the moment, only key generation code is available. The rest will come in a short time! 
 
-* [Generate OpenPGP-compliant keys using Java](https://www.codesandnotes.be/2018/07/17/openpgp-java-keys-generation/)
+* [Generate OpenPGP-compliant keys using Java](https://www.codesandnotes.be/2018/07/17/openpgp-java-keys-generation/) - see tag [java-key-generation](https://github.com/codesandnotes/openpgp-integration/tree/java-key-generation)
 * Java encryption and decryption with Bouncy-GPG
 * Front end encryption with OpenPGP.js library
 * Exchange encrypted messages between Java and JavaScript
