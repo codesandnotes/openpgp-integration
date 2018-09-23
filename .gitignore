@@ -3,3 +3,4 @@
 /.project
 
 /target/
+/src/main/resources/static/node_modules/

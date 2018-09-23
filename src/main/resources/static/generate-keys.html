@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate new keys</title>
+
+    <script src="node_modules/openpgp/dist/openpgp.min.js"></script>
+</head>
+<body>
+
+    <h3>OpenPGP key generation configuration</h3>
+    <p>
+        name: javascript<br/>
+        email: javascript@codesandnotes.be<br/>
+        passphrase: javascript passphrase<br/>
+        numBits: 2048
+    </p>
+
+    <h3>Generated public key</h3>
+    <div id="publicKey"></div>
+
+    <h3>Generated private key</h3>
+    <div id="privateKey"></div>
+
+    <script>
+        const javascriptUserId = {name: 'javascript', email: 'javascript@codesandnotes.be'};
+        const javascriptPassphrase = 'javascript passphrase';
+        const javascriptNumBits = 2048;
+
+        // Initialize openpgp
+        let openpgp = window.openpgp;
+        openpgp.initWorker({path: 'node_modules/openpgp/dist/openpgp.worker.min.js'});
+
+        // Generate some keys!
+        openpgp.generateKey({
+            userIds: javascriptUserId,
+            numBits: javascriptNumBits,
+            passphrase: javascriptPassphrase
+        }).then(key => {
+            console.log('key');
+            document.getElementById('publicKey').innerHTML = key.publicKeyArmored;
+            console.info(key.publicKeyArmored);
+            document.getElementById('privateKey').innerHTML = key.privateKeyArmored;
+            console.info(key.privateKeyArmored);
+        });
+    </script>
+</body>
+</html>

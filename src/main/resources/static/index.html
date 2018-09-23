@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenPGP 3</title>
+
+    <script src="node_modules/openpgp/dist/openpgp.min.js"></script>
+</head>
+<body>
+
+    <ul>
+        <li><a href="generate-keys.html">Generate new "javascript" keys</a></li>
+        <li><a href="encrypt-javascript-to-java.html">Encrypt a message from javascript to java</a></li>
+        <li><a href="encrypt-java-to-javascript.html">Encrypt a message from java to javascript</a></li>
+    </ul>
+
+    <script>
+        // Initialize openpgp worker
+        let openpgp = window.openpgp;
+        openpgp.initWorker({path: 'node_modules/openpgp/dist/openpgp.worker.min.js'});
+    </script>
+</body>
+</html>
