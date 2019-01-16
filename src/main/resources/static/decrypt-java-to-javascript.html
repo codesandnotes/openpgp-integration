@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Encrypt</title>
+
+    <script src="node_modules/openpgp/dist/openpgp.min.js"></script>
+</head>
+<body>
+
+    <h3>Unencrypted message:</h3>
+    <div id="unencryptedMessage"></div>
+
+    <script>
+        const javaUserId = {name: 'java', email: 'java@codesandnotes.be'};
+        const javaPassphrase = 'java passphrase';
+        const javaNumBits = 2048;
+        javaPublicKeysArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: BCPG v1.59
+
+mQENBFsS4Q8DCACes/gePNvdxSENMWlTDIzLE8mLTR3DNd3ar9DOMy7LeraTMPRy
+GGAbGiREcesYHmDnpJF1jVZ9GStbsY657qyIvLdLbbfs3otPNa9G69/3zXOUpox5
+Y5LotqFoe1mVWNvP5irM8hntMn6RB4sqE4ng70OVIpVxhiMfV9seSq4NdSP6uDRz
+HYFPMpTffHKmWQZai15LIaUTOw7YFYdt5xajJqXDU8eM5Zqox8ALqNkP1wZz3coW
+nDSl/nNS6SK8I7OXHFQDO2eiYqS6swGoY4P1nKQ4GbMJfAZwsC1E5Jy1UBVCawgR
+4f6/fyrB3VxudyQA88GX+7oKQpNxKgkLLDrLABEBAAG0HGphdmEgPGphdmFAY29k
+ZXNhbmRub3Rlcy5iZT6JASgEEwMCABIFAlsS4RACGwMCCwkCFQoCHgEACgkQWP9U
+1wP7FqEOjgf+PU2fSG5BUTXCMf9mBLZAd4pAUf5JaFSwETa4sVZ1iO1XfQORViG5
+PpW25uNtTjcW69SL/+6/BEUcuQ5obt+yj+yHqyLgqckenGI98V94+V0MBID3aLZ6
+TvVt5XPHv8a8lDrRVXc5V7SuGsf4bsSV/Ucd1PDYq7cPsSMXfu29pNzC5zXyHzh9
+G1J6qQRIhnD66IMsW9qi6efkdlbsJJgI0ZcTQqwccGTuuBZ6vTJ0sGQdNuRJVG9Q
+/6Kczzim69n9RNzneelRPdLDfqFcyqsIeRN9MM7IU5SSgNKIJm+Bc1u8zvrRR2B0
+Bss90/kkH5+UFATP5Q9sxcFysZcgmSIIobkBDQRbEuEPAQgAnsQ9RB0GOQQgriUe
+ApUxTBhCrOWuoTwtQZq5aGlZCoheyOcBveJj3b7iiyihQZnaGMKff1A6xcmAU2I9
+dGxcoca8RJCKcKJwZkgEB7hdm0jBR0AiBjrCJ0iXy3d55Rhkm2l3bQY3A0jB4c7h
+UqfXJ9E92oU3FIbWdk8epIztfTi2MPezlPGtWsQkNlApz6cOQSoXSlgeFcm35NLe
+QQWW4GUxFY4+IFAG3LwdiEHI280MjxGKXorXLAagCZ59xjFU/rFLtvcGItEZ5IUY
+gNGsjcHSMMm0QAC/XN0xcBJre5BEpK7SFCYN1w14Ew08qTIqokRtcvxwiHZpAwUB
+N5f+JQARAQABiQEfBBgDAgAJBQJbEuEQAhsMAAoJEFj/VNcD+xahR7QH/i9BVs3c
+5sBIdix9NvPq3SOPKmhDcxKYWTOO64TzAujctx2qPVj4ZvT+vZbZ0EIDh+Sorexb
+y3JESLyq5sbJ5lCg/vTbBYJXjn2NWE8Bhpn+/bt0FoYyat5JG8+VzBLiNTbgW4An
+Z4yKws8zxFslMVaUwzgLomv15G10RhKCyF4mowo5QT1dbFXjZtnV4ZSxu9QcmYLK
+w+Vn1JYCAyr+GjamR8soaiysSO5GU5bIZVMMxrQSprQt8FQrLOG+oiCif9Hp3YCX
+iSVyUryZ1hYYRl8faflVVKcCt/t8RGMgu6ywbjJSrUHrLYr18YM7mNYDNCaOfvQQ
+vtGpBVJ8j6heyIA=
+=LCH9
+-----END PGP PUBLIC KEY BLOCK-----
+`;
+        const javaPrivateKeysArmored = `-----BEGIN PGP PRIVATE KEY BLOCK-----
+Version: BCPG v1.59
+
+lQPGBFsS4Q8DCACes/gePNvdxSENMWlTDIzLE8mLTR3DNd3ar9DOMy7LeraTMPRy
+GGAbGiREcesYHmDnpJF1jVZ9GStbsY657qyIvLdLbbfs3otPNa9G69/3zXOUpox5
+Y5LotqFoe1mVWNvP5irM8hntMn6RB4sqE4ng70OVIpVxhiMfV9seSq4NdSP6uDRz
+HYFPMpTffHKmWQZai15LIaUTOw7YFYdt5xajJqXDU8eM5Zqox8ALqNkP1wZz3coW
+nDSl/nNS6SK8I7OXHFQDO2eiYqS6swGoY4P1nKQ4GbMJfAZwsC1E5Jy1UBVCawgR
+4f6/fyrB3VxudyQA88GX+7oKQpNxKgkLLDrLABEBAAH+CQMIO4Zb8ttJKFLAjUAL
+lWW9o+BVd3RtfDRd2iPGXnCKML81+zzTEQYK8FcS2pwcMcd6D8h8QCDl9sYltXCT
+bP7wIVcpkSk3pr6lsjDQQNxd6ukRb5vO9UNiWfce9Tl4fe3oZgOtpP0ymlKvHx+h
+AebENhoCFDOFR8MNbFoC/gooI+JDbNScXmU4n/liBmf+ZwQFBYxOgR/WGx+8gL/t
+Ynws5/Tp/amfmJOem0VK69xAPTcpu1q5bMl9ipMkOCPnHxoa7/+fsjlZzG7XY6pB
+V+E1oa/LpEoDSut1u8oBc7GZajD8zuzi4gEKEkycLAxYYhaPjYdGtHQDbdjEXsY6
+M7gAGxFRH3yncCvQx2wZnlIXmW0ksK8VrilpYLNGRTBjeI8/4QHMsOQLBHYdbI/Y
+1II6L72uuimEMyl+tJ2S40GClL98jQwj0seGFFkYRAQSQNh9VfX35DDpJhkIQl1B
+wftlHjtYrW4eBcMo0lFIIqTtpFzn9/0Av+liK/+Paw/FvYjoJUHaQJ7QhS5OC9yT
+sf9YoJ58RkHARWbsEBHb081Ov6jHrFivjzZa2d3goc1LD3LXfn6rgTdqrOe1l9S0
+grmWeaJYhawp1EcuujpOEtHD43KIjx/2HN9CzRytgzRuUnor8WiGbigFvxZyHzd3
+r5qVs4EB1I5mguP3rLm8j/YxxQC677MihoggchTDovc6EGzSZb+ujpZkwIwCVmQL
+RSF5PF8JggbzGntjWV/AEJy20AU7aDxEKYo35u6GIE4NwRDvMKWKhbA0E42lJobN
+sswOAKqDPFzFw7H457y5H7pABTQOiuGznZX7m+vH+cHnA169LuaYyRrs3DYOAffL
+SLeQqP9oiEj/TiW8eQkPpS22gkfilsdMwn2QTCNe2NsqG0Od5grkMZc1sqiJv9pJ
+R43DNI/MwEvotBxqYXZhIDxqYXZhQGNvZGVzYW5kbm90ZXMuYmU+iQEoBBMDAgAS
+BQJbEuEQAhsDAgsJAhUKAh4BAAoJEFj/VNcD+xahDo4H/j1Nn0huQVE1wjH/ZgS2
+QHeKQFH+SWhUsBE2uLFWdYjtV30DkVYhuT6VtubjbU43FuvUi//uvwRFHLkOaG7f
+so/sh6si4KnJHpxiPfFfePldDASA92i2ek71beVzx7/GvJQ60VV3OVe0rhrH+G7E
+lf1HHdTw2Ku3D7EjF37tvaTcwuc18h84fRtSeqkESIZw+uiDLFvaounn5HZW7CSY
+CNGXE0KsHHBk7rgWer0ydLBkHTbkSVRvUP+inM84puvZ/UTc53npUT3Sw36hXMqr
+CHkTfTDOyFOUkoDSiCZvgXNbvM760UdgdAbLPdP5JB+flBQEz+UPbMXBcrGXIJki
+CKGdA8YEWxLhDwEIAJ7EPUQdBjkEIK4lHgKVMUwYQqzlrqE8LUGauWhpWQqIXsjn
+Ab3iY92+4osooUGZ2hjCn39QOsXJgFNiPXRsXKHGvESQinCicGZIBAe4XZtIwUdA
+IgY6widIl8t3eeUYZJtpd20GNwNIweHO4VKn1yfRPdqFNxSG1nZPHqSM7X04tjD3
+s5TxrVrEJDZQKc+nDkEqF0pYHhXJt+TS3kEFluBlMRWOPiBQBty8HYhByNvNDI8R
+il6K1ywGoAmefcYxVP6xS7b3BiLRGeSFGIDRrI3B0jDJtEAAv1zdMXASa3uQRKSu
+0hQmDdcNeBMNPKkyKqJEbXL8cIh2aQMFATeX/iUAEQEAAf4JAwg7hlvy20koUsCg
+NcwRIiTbc3XimQ9cnKfrdObrRZ7gcyzgGEhJMs1tjPy2CWjbb+wfN9ZSExCc61Mu
+BWTRQk+l1HqqUTLhYwjkXVaVLiw2Tdm9jJy/gHos2WfszShw9JBp/uSibkdm5h4n
+8qgavR6DiF9AwfYGy/7tys8l96C/yL499XUE4MJAZ+HDiGSPXt18yJVAeOtaWV7C
+5WZ3tQT1bolxgeSfHNE9KoK08jFYN3xe08Jwx4/KP2HyltdnCH9Vnz83bVZ+HcHZ
+hgUZs4gNt3HVEQo9MVx/K/37ZHGywiY9VgjI7tkktzxf5sOw5eaig9Dpn4RFUQiX
+iKzDFnsOv1yYlL85OSiX/dQiagq6TcEOPuQ7gZOOmGACHQQ5ahh28dUlqpEFnrIP
+AinhiDgPA7qtuxHRjIJh5zyoIASBmIcPK5uiHzhPMkKXHMoma+Shq7muggVAn0Ql
+VZoos/BDqCsnAS1Ww26gnjsP9Xs+4mMVMNMqQlsWqeuwjuEbk+S8e8EkyU7Efyxa
+JXt/PEjRZg5Gh6+wqmnM+XrDTZDEl0trVdQledypWnRtKBylbvjqJ3AH8wYsT2tK
+HjackhEVxBK3pcURTqTJDq+hAcRH6HLw/o9y1bc2zy4eJq94retgFMhpwNNIQQP9
+30pXsFOr6aDwQuPAv8+Oz5uZ40g2UzCy824IvDRph2EE2pxbdknyOmDRe346cL0q
+LV88/TZLLqvr3waBvlGF5jxHDYB1cP0P9g+28NmrvKSjjp3+cfwjVGdhY0F8EZ3v
+Zy11s9+pBxvxO5Bjw9YoCm6RwzRG/80OIkH3pwA0cRigwLzY5PXQp0IEuwjizUXT
+e1hXNNaR0/oYZ+ShfA0GpvFGHzyOkRlDGnGnrkPi7cytulrj00/L2cmMcKrcn/AG
+Ow7ZPF3j9dmC1fSJAR8EGAMCAAkFAlsS4RACGwwACgkQWP9U1wP7FqFHtAf+L0FW
+zdzmwEh2LH028+rdI48qaENzEphZM47rhPMC6Ny3Hao9WPhm9P69ltnQQgOH5Kit
+7FvLckRIvKrmxsnmUKD+9NsFgleOfY1YTwGGmf79u3QWhjJq3kkbz5XMEuI1NuBb
+gCdnjIrCzzPEWyUxVpTDOAuia/XkbXRGEoLIXiajCjlBPV1sVeNm2dXhlLG71ByZ
+gsrD5WfUlgIDKv4aNqZHyyhqLKxI7kZTlshlUwzGtBKmtC3wVCss4b6iIKJ/0end
+gJeJJXJSvJnWFhhGXx9p+VVUpwK3+3xEYyC7rLBuMlKtQestivXxgzuY1gM0Jo5+
+9BC+0akFUnyPqF7IgA==
+=3jo1
+-----END PGP PRIVATE KEY BLOCK-----
+`;
+
+        const javascriptUserId = {name: 'javascript', email: 'javascript@codesandnotes.be'};
+        const javascriptPassphrase = 'javascript passphrase';
+        const javascriptNumBits = 2048;
+        const javascriptPublicKeysArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: OpenPGP.js v3.0.11
+Comment: https://openpgpjs.org
+
+xsBNBFsQ+JsBCACtCRk+NDuWzKRupUntt/lNdRe/mIQzOFXSN0O5WAuRvgkj
+0Bk5cOOBLHRIGSATYDpxpe5pO77+idDzPOS3YHD83qFUHyWgGCyq7LFhh6Pw
+aTv8WGnhGQjm7SHXR9A1g4P80yNxnbnkIU2XHsZSzhaWi6NM4ATytStQPcnb
+xDL84c4XZomCTKE/WLToUOv86YQ+IIyEoUyi+9Rp/HmQPK6CJ8FZKgKTcZdU
+ZZNKgdPYuuSCUaOs1xQx1uJyY1gCdEZ0UEEyfJWEknpSd+MmA2i7dEYBZjOQ
+okHR8Of5kxW4t9+PW2XDi28A/THCWZBzlPB/yd2G54DftuS22uaS4Kf9ABEB
+AAHNKGphdmFzY3JpcHQgPGphdmFzY3JpcHRAY29kZXNhbmRub3Rlcy5iZT7C
+wHUEEAEIACkFAlsQ+JsGCwkHCAMCCRBtRy9ciXVQ0AQVCAoCAxYCAQIZAQIb
+AwIeAQAApCUH/1IBWSp+nDqPSoOfxOJe0Sn4Z4MY+eMIKPeLg9PZDYpapbJp
+jWULBOivpAtPh7JOAmVT6l5590o5mKz6XQpgsxrZ6M4y3e+Zix/GNc975L7F
+SKSG9iBN2IQPBF1IT3tZLoK5hApSF7gvbs20tumeEN09pe8ZAARE/7LjmzHW
+27NmshWcd1jDziqz0XxixmglTfS7aPpR5pQz3B35jJ7IZ9UvT/EfZGNMwz3A
+sHLQ+DxvYqhVo4TCjpZ5to22fWsao39FBWKiAk9y+yVnzfDjcZQPPwnHViCE
+cvrbXkbzQV8jK2AxD1h0ghXSSU6RGsdk9LYKdsxlXP5/0D0l4vNpSmLOwE0E
+WxD4mwEIAKsGldhariiPJwWWCZc0crq53qIlOWW3N6d8ZpicP7S5a9aJny99
+kZXLYxQAI+7phP1gevWD9UCSBhAxZE9Ta1W0Un8RQVu54nOjEclT6ZUJ+8je
+H1Y3yWDrPzlIxl8MHO4KtsMnSYaxg1Qk0tr5h6x1sIYVH8D5qHS1/p0N6BgL
+VrG0x0jWJsjzr+QkhIKekhrTozJvGmiTNcS+apBCnnUtLH50oPOxQUbi4nuJ
+dL+LO7KXt8lGFImKrXXYymEhM/Iujtvn2aqinIsE13z5QBe7ETrNTzDs2aE3
+nVcr4MaN/7E/QGsTxaWiiegcv6v35jbicNATnrTtnZ8oyulcGCUAEQEAAcLA
+XwQYAQgAEwUCWxD4mwkQbUcvXIl1UNACGwwAAKMAB/4uKi+CHXoV7o/O0rp+
+VOZxYcvBf1kmswWXEzlxdb1I4/s7kIDSHZagxIEAfMulYUbbz/N8bgWi38CP
+lqXrD+gjVrpMOhv1C5WR8okIE4vApiYcYSod/YuZHXx/4Mkbh5byFiAZdXOD
+MVA8wvB3UwdeAjEjeZ95B9I2/NzP8mMLVO2PTG56jxiI1XGe4TvM7WfZ2N+5
+AUPM6qSK4o2jYRYZL59fseNSLhEAyxK2P3m+ziNnwyaOOSECuMMFQMMtKA82
+q+zd5ABsrRY0TSMCES3HrurVtXd0mLhqD7N1dch0FHM0+luDjKkT/ywJ689M
+upHWspuxqQVeEuGACfbklgwG
+=3sO0
+-----END PGP PUBLIC KEY BLOCK-----
+`;
+        const javascriptPrivateKeysArmored = `-----BEGIN PGP PRIVATE KEY BLOCK-----
+Version: OpenPGP.js v3.0.11
+Comment: https://openpgpjs.org
+
+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
+kdaym7GpBV4S4YAJ9uSWDAY=
+=ZHJ7
+-----END PGP PRIVATE KEY BLOCK-----
+`;
+
+        const javaMessageToJavascript = `-----BEGIN PGP MESSAGE-----
+Version: BCPG v1.59
+
+hQEMA5ZnH2a0G9LCAQgApDnkf16W/ayZTfJTF/5xPgLK7/tkrzTYVEnUqS2sqBvT
+p3OMzmU6tCW27NtSLRypvGTCCW8K0KYNLuam0+NTV9QDlg0nnM9n4e19eVhdOASc
+w2lKSThYdjhvYxPOwOoghvTb8c5d3EvPOJkxOCHD+fMtk3k+/GewUDj9X+yzUZD7
+5phVKlQykE1bYv3gEQ+o7BtkhXzdmQMEUBhU50TMOUm75TaokYbgGR7xx84bzuRy
+qlEgOTkQk/budYM9np8xrVQq8K8sKnv3LMAU5N91SoQeSIpkHn4de9JsgJ09BDnI
+oitkekJzgrraOfstw0zBf3gvbPycM6cUUTX1a3qthtLA5wGfGqV53REkcCMWQfXX
+JdCLeSWIQySI8GQKNqRGj2SDTBIAFft189dSih7cx6UdJkJrIRlpL/C6TNlD+ARv
+bNdE6C5kGL97UG1MYKo3YkI+XhyjtAcC6e22K9asuw2CmKEijQGlgOmb1AX7oLA7
+RxipIfAjiets1KKP3lBvSmaHUrhRQrHc02qlDV+XEOSmC3AjBog9ECJgtlEkA7ol
+8ghHp6m1+yCHhO3+cnJKxzWzkND2b0eDJ5RLPB957U1w3VJ6V7yZtMeAj0W0YJ9P
+AIAARxEV6rl+1fzYjeNnjP4eKUKMGd92dEt6ldoirD+Kdeb3Bq0eZfGo8IiusYsB
+AHZf0Il9pzJOU5OhPtxrWKoQIIz44GMNn+0dEiaEW49K1DWnbHuOewDk7+fbc/dI
+s8UWF5PJThXiswXWVC6zWH2jp+KilpooAdjQ3VJjKLeSMwSC9JN3KYIHrlobufPw
+Rn8v/3FQUG9Y6zNO+NMksmP8AN1H/8NJMDo2K20OpqASHxX0gpJSiaqTGmfLE0ZN
+UplIoMGSPrZCusJ7b8GGDMxKR0FExwIPgg==
+=nfYy
+-----END PGP MESSAGE-----
+`;
+
+        // Initialize openpgp
+        let openpgp = window.openpgp;
+        openpgp.initWorker({path: 'node_modules/openpgp/dist/openpgp.worker.min.js'});
+
+        // Decrypt
+
+        let javascriptPrivateKeys = openpgp.key.readArmored(javascriptPrivateKeysArmored);
+        let javascriptUnencryptedPrivateKeysPromises = javascriptPrivateKeys.keys.map(javascriptPrivateKey => {
+            return javascriptPrivateKey.decrypt(javascriptPassphrase);
+        });
+
+        Promise.all(javascriptUnencryptedPrivateKeysPromises).then(() => {
+            return openpgp.decrypt({
+                message: openpgp.message.readArmored(javaMessageToJavascript),
+                publicKeys: openpgp.key.readArmored(javaPublicKeysArmored).keys,
+                privateKeys: javascriptPrivateKeys.keys
+            });
+
+        }).then((unencryptedMessage) => {
+            document.getElementById('unencryptedMessage').innerHTML = unencryptedMessage.data;
+            console.info(unencryptedMessage.data);
+        });
+
+    </script>
+</body>
+</html>
