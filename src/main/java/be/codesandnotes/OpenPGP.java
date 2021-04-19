@@ -88,7 +88,7 @@ public class OpenPGP {
         try {
             return ArmoredKeyPair.of(
                     generateArmoredSecretKeyRing(keyRingGenerator),
-                    generateArmoredPublicKeyRing(keyRingGenerator));
+                    generateArmoredPublicKeyRing(keyRingGenerator));// the generated keys are not working when we do an decrypt
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
